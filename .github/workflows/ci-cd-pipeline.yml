@@ -8,23 +8,43 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-        
-      - name: Deploy to EC2 Instance
-        run: |
-          ssh -i "nginx.pem" ubuntu@ec2-18-234-196-207.compute-1.amazonaws.com 'bash -s' < deploy_script.sh
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          S3_BUCKET_NAME: devops-intern-assignment-ankush
-          
-      - name: Update S3 Bucket
-        run: |
-          aws s3 sync /path/to/static-files s3://devops-intern-assignment-ankush
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Run tests
+      run: |
+        # Add your test commands here. For example:
+        # pytest
+      working-directory: ~/myFlaskApp
+
+    - name: Add SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.EC2_SSH_KEY }}
+        name: id_rsa
+
+    - name: Deploy to EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@ec2-18-234-196-207.compute-1.amazonaws.com << 'EOF'
+          cd ~/myFlaskApp
+          git pull origin main
+          sudo systemctl restart gunicorn
+        EOF
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: us-east-1
+
+    - name: Upload static files to S3
+      run: |
+        aws s3 sync ~/myFlaskApp/static s3://devops-intern-assignment-ankush --acl public-read
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
