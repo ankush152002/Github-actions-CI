@@ -26,8 +26,15 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@ec2-18-234-196-207.compute-1.amazonaws.com << EOF
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@ec2-18-234-196-207.compute-1.amazonaws.com << 'EOF'
+          if [ ! -d "/home/ubuntu/myFlaskApp" ]; then
+            mkdir -p /home/ubuntu/myFlaskApp
+          fi
           cd /home/ubuntu/myFlaskApp
+          if [ ! -d ".git" ]; then
+            git init
+            git remote add origin git@github.com:ankush152002/devops-intern-assignment.git
+          fi
           git pull origin main
           sudo systemctl restart gunicorn
         EOF
@@ -42,3 +49,4 @@ jobs:
       run: |
         aws s3 sync /home/ubuntu/myFlaskApp/static s3://devops-intern-assignment-ankush --acl public-read
       # Syncs static files from the application to the S3 bucket and makes them publicly accessible.
+
