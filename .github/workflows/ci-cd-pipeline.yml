@@ -40,6 +40,5 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: us-east-1
       run: |
-        aws s3 sync ~/myFlaskApp/static s3://devops-intern-assignment-ankush --acl public-read
+        aws s3 sync /home/ubuntu/myFlaskApp/static s3://devops-intern-assignment-ankush --acl public-read
       # Syncs static files from the application to the S3 bucket and makes them publicly accessible.
-
