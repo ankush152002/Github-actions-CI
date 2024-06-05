@@ -1,4 +1,6 @@
-DevOps Internship Assignment Documentation
+Arcitech DevOps Internship Assignment 
+
+
 This document provides an overview of the setup and deployment process, CI/CD pipeline configuration, IAM roles and policies configuration, cron job setup, and any issues faced and resolved during the completion of the DevOps internship assignment.
 
 Setup and Deployment Process
@@ -26,12 +28,15 @@ sudo ufw allow 'Nginx Full'
 - Created an S3 bucket named devops-intern-assignment-ankush.
 - Uploaded a text file with a brief introduction about myself to the S3 bucket.
 - Set appropriate permissions to ensure the file is publicly accessible.
+
+  
 4] CI/CD Pipeline Configuration:
 
 - Created a Git repository on GitHub .
 - Added the web application code to the repository by cloning , adding and pushing to the main repository.
 - Configured a CI/CD pipeline using GitHub Actions Workflow in the ci-cd -pipeline.yaml
-- The pipeline clones the repository, installs dependencies, runs tests (if any), deploys the updated application to the EC2 instance, and updates the S3 bucket with any static files from the application.
+- The pipeline clones the repository, installs dependencies, runs tests (if any), deploys the updated application to the EC2 instance, and updates the S3 bucket 
+  with any static files from the application.
 
 
 5] Manage Access and Permissions:
@@ -57,7 +62,6 @@ Failed to Start Gunicorn Service:
 -Resolved by installing Gunicorn and starting the service using systemctl.
 
 
--AWS Credentials Issue in CI/CD Pipeline:
-
-Resolved by securely storing AWS credentials in GitHub Secrets and accessing them in the pipeline.
+AWS Credentials Issue in CI/CD Pipeline:
+-Resolved by securely storing AWS credentials in GitHub Secrets and accessing them in the pipeline.
 
