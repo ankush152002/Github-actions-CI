@@ -1,4 +1,5 @@
-DevOps Internship Assignment Documentation
+Arcitech DevOps Internship Assignment 
+
 This document provides an overview of the setup and deployment process, CI/CD pipeline configuration, IAM roles and policies configuration, cron job setup, and any issues faced and resolved during the completion of the DevOps internship assignment.
 
 Setup and Deployment Process
