@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/devops-intern
 
 jobs:
   deploy:
@@ -13,40 +12,30 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-      # Checks out the repository code so the workflow can access it.
 
-    - name: Add SSH key
-      uses: shimataro/ssh-key-action@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
       with:
-        key: ${{ secrets.EC2_SSH_KEY }}
-        name: id_rsa
-        known_hosts: ec2-18-234-196-207.compute-1.amazonaws.com
-      # Adds the SSH private key stored in GitHub Secrets to the SSH agent
-      # and specifies the known hosts to avoid SSH key checking issues.
+        python-version: '3.8'
 
+    - name: Run tests
+      run: |
+        # Run any tests if you have them
+        
     - name: Deploy to EC2
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@ec2-18-234-196-207.compute-1.amazonaws.com << 'EOF'
-          if [ ! -d "/home/ubuntu/myFlaskApp" ]; then
-            mkdir -p /home/ubuntu/myFlaskApp
-          fi
           cd /home/ubuntu/myFlaskApp
-          if [ ! -d ".git" ]; then
-            git init
-            git remote add origin git@github.com:ankush152002/devops-intern-assignment.git
-          fi
           git pull origin main
           sudo systemctl restart gunicorn
         EOF
-      # Deploys the updated application to the EC2 instance by SSHing into it,
-      # pulling the latest code, and restarting Gunicorn.
-
-    - name: Upload static files to S3
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: us-east-1
-      run: |
-        aws s3 sync /home/ubuntu/myFlaskApp/static s3://devops-intern-assignment-ankush --acl public-read
-      # Syncs static files from the application to the S3 bucket and makes them publicly accessible.
 
+    - name: Upload static files to S3
+      run: |
+        aws s3 sync static/ s3://devops-intern-assignment-ankush --acl public-read
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
