@@ -8,34 +8,23 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.8'
-
-    - name: Run tests
-      run: |
-        # Run any tests if you have them
+      - name: Checkout Repository
+        uses: actions/checkout@v2
         
-    - name: Deploy to EC2
-      run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@ec2-18-234-196-207.compute-1.amazonaws.com << 'EOF'
-          cd /home/ubuntu/myFlaskApp
-          git pull origin main
-          sudo systemctl restart gunicorn
-        EOF
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Deploy to EC2 Instance
+        run: |
+          ssh -i "nginx.pem" ubuntu@ec2-18-234-196-207.compute-1.amazonaws.com 'bash -s' < deploy_script.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          S3_BUCKET_NAME: devops-intern-assignment-ankush
+          
+      - name: Update S3 Bucket
+        run: |
+          aws s3 sync /path/to/static-files s3://devops-intern-assignment-ankush
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-    - name: Upload static files to S3
-      run: |
-        aws s3 sync static/ s3://devops-intern-assignment-ankush --acl public-read
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
