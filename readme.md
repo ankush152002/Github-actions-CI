@@ -1,9 +1,5 @@
 Arcitech DevOps Internship Assignment 
-
-
-This document provides an overview of the setup and deployment process, CI/CD pipeline configuration, IAM roles and policies configuration, cron job setup, and any issues faced and resolved during the completion of the DevOps internship assignment.
-
-Setup and Deployment Process
+----------------------------------------------------------------------------------------------------------------------------------------------
 
 1] Set Up an EC2 Instance:
 =
@@ -22,11 +18,11 @@ Setup and Deployment Process
 - Configured the Flask application to run with Gunicorn as the WSGI server.
 - Configured Nginx as a reverse proxy to forward requests to the Gunicorn server.
 
- server {
-    listen 80;
-    server_name 17.25.35.128;
+   server {
+     listen 80;
+      server_name 17.25.35.128;
 
-    location / {
+      location / {
         proxy_pass http://unix:/home/ubuntu/myFlaskApp/app.sock;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -39,7 +35,9 @@ Setup and Deployment Process
 Major commands Used 
 
 gunicorn --bind 0.0.0.0:5000 wsgi:app
+
 sudo ln -s /etc/nginx/sites-available/app /etc/nginx/sites-enabled
+
 sudo ufw allow 'Nginx Full'
 
 3] Configure S3 for Static File Hosting:
@@ -118,6 +116,28 @@ fi
 
 
 - Wrote a lambda fucntion to start and stop instance using boto3 module and triggered it by cloudwatch
+
+- Created IAM Role:
+  Created an IAM role with the following policies:
+  AWSLambdaBasicExecutionRole
+  AmazonEC2FullAccess
+
+-Start EC2 Instance Lambda Function:
+ 
+    CloudWatch Events
+    Start EC2 Instance Rule:
+
+     Name: StartEC2InstanceRule
+     Schedule Expression: cron(0 8 * * ? *) (Runs at 8:00 AM UTC every day)
+     Target: StartEC2Instance Lambda function
+
+ -Stop EC2 Instance Lambda Function:
+
+   Stop EC2 Instance Rule:
+
+      Name: StopEC2InstanceRule
+      Schedule Expression: cron(0 20 * * ? *) (Runs at 8:00 PM UTC every day)
+     Target: StopEC2Instance Lambda function
 
 
 7]Issues Faced and Resolved
