@@ -12,8 +12,8 @@ Setup and Deployment Process
 
 2] Deploy a Simple Web Application:
 
-- Created a Python Flask application app.py that returns "Hello, World!"
-  Created a Virtual Environment and Install Dependencies:
+- Created a Python Flask application app.py that returns "Hello World!"
+  Created a Virtual Environment and Installed Dependencies:
   Created a file named wsgi.py:
   Created a systemd service file for Gunicorn (/etc/systemd/system/gunicorn.service):
   Created an Nginx configuration file (/etc/nginx/sites-available/myFlaskApp):
@@ -124,7 +124,5 @@ Failed to Start Gunicorn Service:
 
 
 AWS Credentials Issue in CI/CD Pipeline:
--Resolved by securely storing AWS credentials in GitHub Secrets and accessing them in the pipeline.
-
-Still facing some  issues in pipeline for deploying updated application and some network and proxy issues failed to show helloworld at port.
+-Resolved by securely storing AWS credentials in GitHub Secrets and accessing them in the pipeline.–
 
