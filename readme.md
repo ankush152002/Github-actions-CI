@@ -18,9 +18,8 @@ Arcitech DevOps Internship Assignment
 - Configured the Flask application to run with Gunicorn as the WSGI server.
 - Configured Nginx as a reverse proxy to forward requests to the Gunicorn server.
 
-   server {
-     listen 80;
-      server_name 17.25.35.128;
+      server {
+        listen 80; server_name 17.25.35.128;
 
       location / {
         proxy_pass http://unix:/home/ubuntu/myFlaskApp/app.sock;
@@ -56,6 +55,7 @@ sudo ufw allow 'Nginx Full'
 - Using Git Bash Perfomed git commands
 - Configured a CI/CD pipeline using GitHub Actions Workflow in the ci-cd -pipeline.yaml
 
+   
    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: us-east-1
@@ -99,7 +99,7 @@ sudo ufw allow 'Nginx Full'
 6] Cron Job Setup
 -
 
-Wrote a cron job script on the EC2 instance to check the application health by making an HTTP request to the web app and logging the status every 5 minutes.
+- Wrote a cron job script on the EC2 instance to check the application health by making an HTTP request to the web app and logging the status every 5 minutes.
 
 
 #!/bin/bash
@@ -143,14 +143,14 @@ fi
 7]Issues Faced and Resolved
 =
 
-Permission Denied Error When SSHing into EC2 Instance:
+- Permission Denied Error When SSHing into EC2 Instance:
 -Resolved by ensuring correct IAM roles and policies were assigned to the EC2 instance for SSH access.
 
 
-Failed to Start Gunicorn Service:
+- Failed to Start Gunicorn Service:
 -Resolved by installing Gunicorn and starting the service using systemctl.
 
 
-AWS Credentials Issue in CI/CD Pipeline:
+- AWS Credentials Issue in CI/CD Pipeline:
 -Resolved by securely storing AWS credentials in GitHub Secrets and accessing them in the pipeline.–
 
