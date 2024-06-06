@@ -97,23 +97,9 @@ sudo ufw allow 'Nginx Full'
 
 
 6] Cron Job Setup
--
+
 
 - Wrote a cron job script on the EC2 instance to check the application health by making an HTTP request to the web app and logging the status every 5 minutes.
-
-
-#!/bin/bash
-
-RESPONSE=$(curl --write-out '%{http_code}' --silent --output /dev/null http://localhost)
-
-if [ "$RESPONSE" -ne 200 ]; then
-  echo "Application is down. HTTP Status: $RESPONSE"
-else
-  echo "Application is running. HTTP Status: $RESPONSE"
-fi
-
-
-
 
 - Wrote a lambda fucntion to start and stop instance using boto3 module and triggered it by cloudwatch
 
@@ -153,3 +139,4 @@ fi
 
 - AWS Credentials Issue in CI/CD Pipeline:
 -Resolved by securely storing AWS credentials in GitHub Secrets and accessing them in the pipeline.–
+

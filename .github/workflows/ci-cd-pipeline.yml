@@ -1,0 +1,45 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Add SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.EC2_SSH_KEY }}
+        name: id_rsa
+        if_key_exists: fail
+        known_hosts: |
+           ec2-34-204-45-169.compute-1.amazonaws.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCxRCK8DogF+IgA9IEJMRFChfh7PjfkmC8doZxPRdnM0/WZTd1LKGRZxU6XWnT4Jyj4NhviHf7JqZglShf8bMLTp7p32oKXdUhDFSWT6+oDIfqSQ4dJ28ioXY5cn9jwcS+8gJtZvJZ3vJpetIofIzLNVhIpImOTsG+dpKc+A/Mum7bBpqHo0NK5632Dcy9aArGemUlfsk7jlDd/4iRWP5jCrXQaqClqYCBfw8RCVNXQFBC2nkCQUz/LbJq2EZeCPxqFFl48yFxST3Wc++0HFzmtxvJLY4Cl4sr8MqHddtIoXKw2RNFt9IHU+kLp2fdgwWP/uF+kA3syp8PodDaxj2xreilbDv2qw05mW6VEL1hx1TkIBWb6bhiRLF1mWPNS6IJHO2sDALHgXI2Ls+r+9zW8rqGLoPJTWwWwtghZeW73pOXpQ6mUuGNTi2B6UcaRMHBObrVPURQwowB+0K1G6Q8ONlspNjeUksY5rNMBpCcE5AslxCdfZlpswo8+DWz7V78=
+
+
+    - name: Deploy to EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@ec2-34-204-45-169.compute-1.amazonaws.com << 'EOF'
+          cd ~/myFlaskApp
+          git pull origin main
+          sudo systemctl restart gunicorn
+        EOF
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: us-east-1
+
+    - name: Upload static files to S3
+      run: echo "No static files to upload"
+        
